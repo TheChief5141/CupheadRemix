@@ -75,6 +75,7 @@ public class PlayerController : MonoBehaviour
     private bool isDashing;
     //checks if the player is able to currently dash
     private bool canDash = true;
+    private bool dashInput;
 
     [Header("Invincible")]
     //the amount of time spent invicible after being hit
@@ -122,25 +123,34 @@ public class PlayerController : MonoBehaviour
         modifyPhysics();
     }
 
+    /*
+    Used to check inputs from the player, and to check if we are currently jumping, and switch weapons between the two currently programmed
+    */
     private void GatherInputs()
     {
+        //using a raycast to check if our character is touching the ground or not
         onGround = Physics2D.Raycast(transform.position + colliderOffset, Vector2.down, groundLength, groundLayer) || Physics2D.Raycast(transform.position - colliderOffset, Vector2.down, groundLength, groundLayer);
+        //controls for the game
         isJumping = Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.W);
         isFalling = Input.GetButtonUp("Jump") || Input.GetKeyUp(KeyCode.W);
         direction = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         isFiring = Input.GetKeyDown(KeyCode.C);
         switchWeapons = Input.GetKeyDown(KeyCode.X);
+        dashInput = Input.GetKey(KeyCode.Q);
 
+        //if we are jumping, remove from the timer so we can jump again
         if (isJumping)
         {
             jumpTimer = Time.time + jumpDelay;
         }
 
+        //restart the scene (for debugging)
         if (Input.GetKeyDown(KeyCode.R))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
 
+        //switch weapons, 0 is basic projectile, 1 is spread shot
         if (switchWeapons)
         {
             if (currentWeapon == 1)
@@ -154,13 +164,15 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /*
+    Used to move the character around the map, make character dash if we press q, fire projectiles, and flip our character based on the direction we are moving
+    */
     void moveCharacter(float horizontal)
     {
-
+        //grabs the current position of the player
         var position = rb2d.position;
 
-        var dashInput = Input.GetKey(KeyCode.Q);
-
+        //if we press the dash key, this checks the direction our player is going to dash
         if (dashInput && canDash)
         {
             Debug.Log("Dashing");
@@ -172,12 +184,16 @@ public class PlayerController : MonoBehaviour
                 dashingDir = new Vector2(transform.localScale.x, 0);
             }
         }
+
+        //flips our character based on our key inputs and the direction that our character is currently facing
         Debug.Log(horizontal);
         if ((horizontal > 0 && !facingRight) || (horizontal < 0 && facingRight))
         {
             Flip();
         } 
         
+        //if dashing, add extra dash speed to the players movement
+        //if not dashing, then move by the regular movement amount
         if (isDashing)
         {
             rb2d.AddForce(Vector2.right * horizontal * groundSpeed * dashSpeed, ForceMode2D.Force);
@@ -187,6 +203,7 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("moving and groovin");
             rb2d.AddForce(Vector2.right * horizontal * groundSpeed, ForceMode2D.Force);
+            //makes sure our character gets locked at a certain speed called maxSpeed
             if (Mathf.Abs(rb2d.velocity.x) > maxSpeed)
             {
                 rb2d.velocity = new Vector2((Mathf.Sign(rb2d.velocity.x)) * (maxSpeed), rb2d.velocity.y);
@@ -194,6 +211,7 @@ public class PlayerController : MonoBehaviour
             
         }
 
+        //fires the current weapon that we are currently wielding
         if (isFiring && currentWeapon == 0)
         {
             switch (currentWeapon)
@@ -207,6 +225,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        //if we are invincible, decrease the invincible timer
         if (isInvincible)
         {
             invincibleTimer -= Time.deltaTime;
@@ -215,24 +234,9 @@ public class PlayerController : MonoBehaviour
                 isInvincible = false;
             }
         }
-        
-
-        /*
-        if (isDashing)
-        {
-            position.x = position.x + groundSpeed * dashingDir.x * Time.deltaTime * dashSpeed;
-            
-        }
-        else
-        {
-            position.x = position.x + groundSpeed * horizontal * Time.deltaTime;
-        }
-        rb2d.MovePosition(position);
-        */
-
 
         //Animating
-        //Once animations are set up, delete the paragrapgh comments on lines 106 and line 150
+        //Once animations are set up, delete the paragraph comments on lines 106 and line 150
         /*
         if ((rb2d.velocity.y) > 0 && !onGround)
         {
@@ -282,6 +286,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    //used to make the character jump when we press the w or spacebar
     private void characterJump()
     {
         Debug.Log("Yahooo!");
@@ -290,6 +295,7 @@ public class PlayerController : MonoBehaviour
         jumpTimer = 0;
     }
 
+    //changes the rotation of the player in the y, based on the current direction the player is facing
     private void Flip()
     {
         Debug.Log("flip");
@@ -297,10 +303,14 @@ public class PlayerController : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, facingRight ? 0: 180, 0);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
     }
 
+    //used to calculate physics for gravity, and movement while the player is in the air
     private void modifyPhysics()
     {
+        //checks if the player is trying to move the opposite way that it is currently moving
         bool changingDirections = (direction.x > 0 && rb2d.velocity.x < 0) || (direction.x < 0 && rb2d.velocity.x > 0);
 
+        //if on the ground, increase the drag on the player to create friction on the ground
+        //if not on the ground, move the character down based on the strength of gravity and the fallmultipler
         if (onGround)
         {
             if (Mathf.Abs(direction.x) < 0.4f || changingDirections)
@@ -328,6 +338,7 @@ public class PlayerController : MonoBehaviour
         
     }
 
+    //used to make the character stop dashing after the total dash time
     private IEnumerator StopDashing()
     {
         yield return new WaitForSeconds(dashTime);
@@ -335,23 +346,29 @@ public class PlayerController : MonoBehaviour
         canDash = true;
     }
 
+    //function used to fire the basic projectile, from a prefab located in the prefabs folder
     private void fireBasicProjectile(Vector2 projectileDirection)
     {
+        //if not moving in a direction, fires the projectile by the direction the player is facing
         if (projectileDirection == Vector2.zero)
         {
             dashingDir = new Vector2(transform.localScale.x, 0);
         }
+        //creates the projectile object
         GameObject projectileObject = Instantiate(basicProjectile, rb2d.position + Vector2.up * 0.5f, Quaternion.identity);
         ProjectileScript projectile = projectileObject.GetComponent<ProjectileScript>();
+        //launches the projectile based on the projectile speed
         projectile.Launch(projectileDirection, projectileSpeed);
     }
 
+    //function used to fire the spread shot, from a prefab located in the prefabs folder
     public void fireSpreadShot(Vector2 direction)
     {
         spreadShot.gameObject.transform.rotation = Quaternion.FromToRotation(Vector3.up, new Vector3(direction.x, direction.y, 0));
         spreadShot.Emit(10);
     }
 
+    //function to be run when hitting an enemy, and starts the invincible timer
     public void ChangeHealth(int amount)
     {
         //GameObject particles = healthParticlesPrefab;
