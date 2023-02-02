@@ -24,6 +24,8 @@ public class ProjectileScript : MonoBehaviour
         rb2d.AddForce(direction * force);
     }
 
+
+    /*
     void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.CompareTag("Enemy"))
@@ -45,11 +47,12 @@ public class ProjectileScript : MonoBehaviour
         
         Destroy(gameObject);
     }
+    */
 
     // Update is called once per frame
     void Update()
     {
-        if (transform.position.magnitude > 1000.0f)
+        if (transform.position.magnitude > 100.0f)
         {
             Destroy(gameObject);
         }

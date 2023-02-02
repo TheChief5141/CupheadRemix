@@ -111,6 +111,23 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         GatherInputs();
+        ProjectileCheck();
+    }
+
+    void ProjectileCheck()
+    {
+        //fires the current weapon that we are currently wielding
+        if (isFiring)
+        {
+            Debug.Log("Where ya at");
+            if (currentWeapon == 0)
+            {
+                Debug.Log("Before");
+                fireBasicProjectile(direction);
+            }else if (currentWeapon == 1){
+                fireSpreadShot(direction);
+            }
+        }
     }
 
     void FixedUpdate()
@@ -135,6 +152,7 @@ public class PlayerController : MonoBehaviour
         isFalling = Input.GetButtonUp("Jump") || Input.GetKeyUp(KeyCode.W);
         direction = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         isFiring = Input.GetKeyDown(KeyCode.C);
+        Debug.Log("Projectile firing is " + isFiring);
         switchWeapons = Input.GetKeyDown(KeyCode.X);
         dashInput = Input.GetKey(KeyCode.Q);
 
@@ -201,7 +219,6 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            Debug.Log("moving and groovin");
             rb2d.AddForce(Vector2.right * horizontal * groundSpeed, ForceMode2D.Force);
             //makes sure our character gets locked at a certain speed called maxSpeed
             if (Mathf.Abs(rb2d.velocity.x) > maxSpeed)
@@ -209,20 +226,6 @@ public class PlayerController : MonoBehaviour
                 rb2d.velocity = new Vector2((Mathf.Sign(rb2d.velocity.x)) * (maxSpeed), rb2d.velocity.y);
             }
             
-        }
-
-        //fires the current weapon that we are currently wielding
-        if (isFiring && currentWeapon == 0)
-        {
-            switch (currentWeapon)
-            {
-                case 0: 
-                    fireBasicProjectile(direction);
-                    break;
-                case 1: 
-                    fireSpreadShot(direction);
-                    break;
-            }
         }
 
         //if we are invincible, decrease the invincible timer
@@ -352,13 +355,14 @@ public class PlayerController : MonoBehaviour
         //if not moving in a direction, fires the projectile by the direction the player is facing
         if (projectileDirection == Vector2.zero)
         {
-            dashingDir = new Vector2(transform.localScale.x, 0);
+            projectileDirection = new Vector2(transform.localScale.x, 0);
         }
         //creates the projectile object
         GameObject projectileObject = Instantiate(basicProjectile, rb2d.position + Vector2.up * 0.5f, Quaternion.identity);
         ProjectileScript projectile = projectileObject.GetComponent<ProjectileScript>();
         //launches the projectile based on the projectile speed
-        projectile.Launch(projectileDirection, projectileSpeed);
+        projectile.Launch(projectileDirection.normalized, projectileSpeed);
+        Debug.Log("after");
     }
 
     //function used to fire the spread shot, from a prefab located in the prefabs folder

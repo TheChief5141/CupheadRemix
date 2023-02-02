@@ -275,7 +275,7 @@ MonoBehaviour:
   dashSpeed: 4
   dashTime: 0.5
   timeInvincible: 2
-  basicProjectile: {fileID: 8890577431583091878, guid: b58515dc95095a147a7bc22efb055ab9, type: 3}
+  basicProjectile: {fileID: 7138930689343514663, guid: 49a9ff415ffe9e445900de137ec7c4c9, type: 3}
   spreadShot: {fileID: 1333414945}
   projectileSpeed: 1000
   currentWeapon: 0
@@ -368,8 +368,8 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &62821196
-CapsuleCollider2D:
+--- !u!61 &62821196
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -382,8 +382,18 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
   m_Size: {x: 1, y: 1}
-  m_Direction: 0
+  m_EdgeRadius: 0
 --- !u!1 &168685563
 GameObject:
   m_ObjectHideFlags: 0
@@ -512,67 +522,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &560573109
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 7609796240137954305, guid: b58515dc95095a147a7bc22efb055ab9, type: 3}
-      propertyPath: gameManager
-      value: 
-      objectReference: {fileID: 168685564}
-    - target: {fileID: 8890577431583091878, guid: b58515dc95095a147a7bc22efb055ab9, type: 3}
-      propertyPath: m_Name
-      value: basicProjectile
-      objectReference: {fileID: 0}
-    - target: {fileID: 8999392608094644499, guid: b58515dc95095a147a7bc22efb055ab9, type: 3}
-      propertyPath: m_RootOrder
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 8999392608094644499, guid: b58515dc95095a147a7bc22efb055ab9, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -3.26
-      objectReference: {fileID: 0}
-    - target: {fileID: 8999392608094644499, guid: b58515dc95095a147a7bc22efb055ab9, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.38068798
-      objectReference: {fileID: 0}
-    - target: {fileID: 8999392608094644499, guid: b58515dc95095a147a7bc22efb055ab9, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8999392608094644499, guid: b58515dc95095a147a7bc22efb055ab9, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8999392608094644499, guid: b58515dc95095a147a7bc22efb055ab9, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8999392608094644499, guid: b58515dc95095a147a7bc22efb055ab9, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8999392608094644499, guid: b58515dc95095a147a7bc22efb055ab9, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8999392608094644499, guid: b58515dc95095a147a7bc22efb055ab9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8999392608094644499, guid: b58515dc95095a147a7bc22efb055ab9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8999392608094644499, guid: b58515dc95095a147a7bc22efb055ab9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: b58515dc95095a147a7bc22efb055ab9, type: 3}
 --- !u!1 &1257284278
 GameObject:
   m_ObjectHideFlags: 0
@@ -701,7 +650,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!199 &1333414944
 ParticleSystemRenderer:
   serializedVersion: 6
