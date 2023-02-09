@@ -76,6 +76,7 @@ public class PlayerController : MonoBehaviour
     //checks if the player is able to currently dash
     private bool canDash = true;
     private bool dashInput;
+    private TrailRenderer trailRenderer;
 
     [Header("Invincible")]
     //the amount of time spent invicible after being hit
@@ -89,7 +90,7 @@ public class PlayerController : MonoBehaviour
     //creating the basic projectile from a prefab
     public GameObject basicProjectile;
     //creating the projectile from the spread shot
-    public ParticleSystem spreadShot;
+    public GameObject spreadShot;
     //controls the speed of the projectiles
     public float projectileSpeed;
     //checks if the bullet has been fired or not
@@ -98,13 +99,24 @@ public class PlayerController : MonoBehaviour
     private bool switchWeapons;
     //represents with currentweapon we are currently wielding, 0 for basic, 1 for spread shot
     public int currentWeapon;
+    //controls the amount of spread shots used
+    public int spreadAmount;
+
+    [Header("Parry")]
+    private bool parryActive;
+    private bool parryInput;
+    private bool canParry = true;
+    public float parryActiveTime = 2.0f;
+    private float parryActiveTimer;
+    public int parryTime = 5;
+    public AudioClip parrySoundEffect;
 
 
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        trailRenderer = GetComponent<TrailRenderer>();
     }
 
     // Update is called once per frame
@@ -125,7 +137,7 @@ public class PlayerController : MonoBehaviour
                 Debug.Log("Before");
                 fireBasicProjectile(direction);
             }else if (currentWeapon == 1){
-                fireSpreadShot(direction);
+                fireSpreadShot(direction, spreadAmount);
             }
         }
     }
@@ -154,7 +166,8 @@ public class PlayerController : MonoBehaviour
         isFiring = Input.GetKeyDown(KeyCode.C);
         Debug.Log("Projectile firing is " + isFiring);
         switchWeapons = Input.GetKeyDown(KeyCode.X);
-        dashInput = Input.GetKey(KeyCode.Q);
+        dashInput = Input.GetKeyDown(KeyCode.Q);
+        parryInput = Input.GetKeyDown(KeyCode.Z);
 
         //if we are jumping, remove from the timer so we can jump again
         if (isJumping)
@@ -180,6 +193,42 @@ public class PlayerController : MonoBehaviour
                 currentWeapon = 1;
             }
         }
+
+        if (parryInput && canParry)
+        {
+            parryActive = true;
+            canParry = false;
+            parryActiveTimer = parryActiveTime;
+        }
+
+        if (dashInput && canDash)
+        {
+            Debug.Log("Dashing");
+            isDashing = true;
+            canDash = false;
+            trailRenderer.emitting = true;
+            dashingDir = new Vector2 (Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+            if (dashingDir == Vector2.zero)
+            {
+                dashingDir = new Vector2(transform.localScale.x, 0);
+            }
+            StartCoroutine(StopDashing());
+        }
+
+        if (isDashing)
+        {
+            rb2d.velocity = new Vector2(dashingDir.x * dashSpeed, 0);
+            //rb2d.AddForce(Vector2.right *, ForceMode2D.Impulse);
+            return;
+        }
+        rb2d.velocity = new Vector2(direction.x * groundSpeed, rb2d.velocity.y);
+        //rb2d.AddForce(Vector2.right * horizontal * groundSpeed, ForceMode2D.Force);
+        //makes sure our character gets locked at a certain speed called maxSpeed
+        if (Mathf.Abs(rb2d.velocity.x) > maxSpeed)
+        {
+            rb2d.velocity = new Vector2((Mathf.Sign(rb2d.velocity.x)) * (maxSpeed), rb2d.velocity.y);
+        }
+
     }
 
     /*
@@ -190,19 +239,6 @@ public class PlayerController : MonoBehaviour
         //grabs the current position of the player
         var position = rb2d.position;
 
-        //if we press the dash key, this checks the direction our player is going to dash
-        if (dashInput && canDash)
-        {
-            Debug.Log("Dashing");
-            isDashing = true;
-            canDash = false;
-            dashingDir = new Vector2 (Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-            if (dashingDir == Vector2.zero)
-            {
-                dashingDir = new Vector2(transform.localScale.x, 0);
-            }
-        }
-
         //flips our character based on our key inputs and the direction that our character is currently facing
         Debug.Log(horizontal);
         if ((horizontal > 0 && !facingRight) || (horizontal < 0 && facingRight))
@@ -210,24 +246,6 @@ public class PlayerController : MonoBehaviour
             Flip();
         } 
         
-        //if dashing, add extra dash speed to the players movement
-        //if not dashing, then move by the regular movement amount
-        if (isDashing)
-        {
-            rb2d.AddForce(Vector2.right * horizontal * groundSpeed * dashSpeed, ForceMode2D.Force);
-            StartCoroutine(StopDashing());
-        }
-        else
-        {
-            rb2d.AddForce(Vector2.right * horizontal * groundSpeed, ForceMode2D.Force);
-            //makes sure our character gets locked at a certain speed called maxSpeed
-            if (Mathf.Abs(rb2d.velocity.x) > maxSpeed)
-            {
-                rb2d.velocity = new Vector2((Mathf.Sign(rb2d.velocity.x)) * (maxSpeed), rb2d.velocity.y);
-            }
-            
-        }
-
         //if we are invincible, decrease the invincible timer
         if (isInvincible)
         {
@@ -237,6 +255,32 @@ public class PlayerController : MonoBehaviour
                 isInvincible = false;
             }
         }
+
+        if (parryActive)
+        {
+            parryActiveTimer -= Time.deltaTime;
+            if (parryActiveTimer < 0)
+            {
+                parryActive = false;
+                canParry = true;
+            }
+        }
+
+        /*
+        //if dashing, add extra dash speed to the players movement and stop player from falling
+        //if not dashing, then move by the regular movement amount
+        if (isDashing)
+        {
+            rb2d.velocity = new Vector2(rb2d.velocity.x * dashingDir.x * dashSpeed, 0);
+            //rb2d.AddForce(Vector2.right *, ForceMode2D.Impulse);
+            StartCoroutine(StopDashing());
+            return;
+        }
+        */
+
+        
+
+
 
         //Animating
         //Once animations are set up, delete the paragraph comments on lines 106 and line 150
@@ -303,7 +347,8 @@ public class PlayerController : MonoBehaviour
     {
         Debug.Log("flip");
         facingRight = !facingRight;
-        transform.rotation = Quaternion.Euler(0, facingRight ? 0: 180, 0);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+        //transform.rotation = Quaternion.Euler(0, facingRight ? 0: 180, 0);
+        transform.localScale = new Vector2(transform.localScale.x * -1, transform.localScale.y);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
     }
 
     //used to calculate physics for gravity, and movement while the player is in the air
@@ -346,6 +391,7 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(dashTime);
         isDashing = false;
+        trailRenderer.emitting = false;
         canDash = true;
     }
 
@@ -366,10 +412,20 @@ public class PlayerController : MonoBehaviour
     }
 
     //function used to fire the spread shot, from a prefab located in the prefabs folder
-    public void fireSpreadShot(Vector2 direction)
+    public void fireSpreadShot(Vector2 projectileDirection, int spreadAmount)
     {
-        spreadShot.gameObject.transform.rotation = Quaternion.FromToRotation(Vector3.up, new Vector3(direction.x, direction.y, 0));
-        spreadShot.Emit(10);
+        for (int i = 0; i < spreadAmount; i++)
+        {
+            //if not moving in a direction, fires the projectile by the direction the player is facing
+            if (projectileDirection == Vector2.zero)
+            {
+                projectileDirection = new Vector2(transform.localScale.x, 0);
+            }
+            GameObject projectileObject = Instantiate(spreadShot, rb2d.position + Vector2.up * 0.5f, Quaternion.identity);
+            ProjectileScript projectile = projectileObject.GetComponent<ProjectileScript>();
+            Vector2 newRotation = new Vector2(projectileDirection.x, projectileDirection.y * ((i/4) - (spreadAmount/10)));
+            projectile.Launch(newRotation, projectileSpeed);
+        }
     }
 
     //function to be run when hitting an enemy, and starts the invincible timer
@@ -396,5 +452,35 @@ public class PlayerController : MonoBehaviour
         {
             SceneManager.LoadScene("SampleScene");
         }
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "ParryEnemy")
+        {
+            if (parryActive == true)
+            {
+                ParryEffects();
+                StartCoroutine(StopParrying());
+                return;
+            }
+            else
+            {
+                //ChangeHealth();
+            }
+        }
+    } 
+
+    void ParryEffects()
+    {
+        Debug.Log("Parried");
+        audioSource.PlayOneShot(parrySoundEffect);
+    }
+
+    private IEnumerator StopParrying()
+    {
+        yield return new WaitForSeconds(parryTime);
+        canParry = true;
+        parryActive = false;
     }
 }

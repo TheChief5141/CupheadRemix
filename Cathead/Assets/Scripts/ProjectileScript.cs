@@ -25,12 +25,12 @@ public class ProjectileScript : MonoBehaviour
     }
 
 
-    /*
+    
     void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.CompareTag("Enemy"))
         {
-            enemyController e = other.collider.GetComponent<enemyController>();
+            BasicEnemyController e = other.collider.GetComponent<BasicEnemyController>();
             if (e != null)
             {
                 Destroy(other.gameObject);
@@ -47,7 +47,7 @@ public class ProjectileScript : MonoBehaviour
         
         Destroy(gameObject);
     }
-    */
+    
 
     // Update is called once per frame
     void Update()

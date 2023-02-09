@@ -6,6 +6,9 @@ TagManager:
   tags:
   - PlayerController
   - Enemy
+  - Marker
+  - BasicEnemy
+  - ParryEnemy
   layers:
   - Default
   - TransparentFX
@@ -16,7 +19,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - Player
   - Ground
   - 
   - 
