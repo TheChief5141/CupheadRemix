@@ -7,13 +7,18 @@ public class laser : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        m_lineRenderer.enabled = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if(Input.GetKeyDown(KeyCode.T))
+        {
+            Debug.Log("LASERBEAM");
+            ShootLaser();
+            Debug.Log("LASERWORKS");
+        }
     }
 
     [SerializeField] private float defDistanceRay = 100;
@@ -28,19 +33,11 @@ public class laser : MonoBehaviour
 
     void ShootLaser()
     {
-        if(Input.GetKeyDown(KeyCode.T))
-        {
-            Debug.Log("LASERBEAM");
-            if (Physics2D.Raycast(m_transform.position, m_transform.right))
-            {
-                RaycastHit2D _hit = Physics2D.Raycast(laserFirePoint.position, m_transform.right);
-                 Draw2DRay(laserFirePoint.position, _hit.point);
-             }
-            else
-            {
+             m_lineRenderer.enabled = true;
+           
+                Debug.Log("HIT SOMETHING");
+             
                  Draw2DRay(laserFirePoint.position, laserFirePoint.transform.right * defDistanceRay);
-            }
-        }
     }
 
     void Draw2DRay(Vector2 startPos, Vector2 endPos)
