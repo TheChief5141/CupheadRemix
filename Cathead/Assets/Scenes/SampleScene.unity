@@ -529,7 +529,11 @@ MonoBehaviour:
   spreadAmount: 5
   parryActiveTime: 2
   parryTime: 5
-  parrySoundEffect: {fileID: 8300000, guid: 4641b587ede73214ca56341e5235f9a8, type: 3}
+  parrySoundEffect: {fileID: 8300000, guid: 54e6ce13ac6b44585ad91e3118556b23, type: 3}
+  shootShot: {fileID: 8300000, guid: f83ed828af90241bc8240f2a25eb80e9, type: 3}
+  shootSpread: {fileID: 8300000, guid: a8368f0f0d16747d48c986e257ab826d, type: 3}
+  jumpUp: {fileID: 8300000, guid: 75137071f043c48bf969a7aa25c95634, type: 3}
+  laserSound: {fileID: 8300000, guid: a7faf0961d7d5418bab6eb726cbe03ca, type: 3}
 --- !u!50 &62821193
 Rigidbody2D:
   serializedVersion: 4
