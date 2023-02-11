@@ -101,6 +101,7 @@ public class PlayerController : MonoBehaviour
     public int currentWeapon;
     //controls the amount of spread shots used
     public int spreadAmount;
+    public int radius;
 
     [Header("Parry")]
     private bool parryActive;
@@ -137,7 +138,7 @@ public class PlayerController : MonoBehaviour
                 Debug.Log("Before");
                 fireBasicProjectile(direction);
             }else if (currentWeapon == 1){
-                fireSpreadShot(direction, spreadAmount);
+                fireSpreadShot(direction, spreadAmount, transform.position);
             }
         }
     }
@@ -163,11 +164,11 @@ public class PlayerController : MonoBehaviour
         isJumping = Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.W);
         isFalling = Input.GetButtonUp("Jump") || Input.GetKeyUp(KeyCode.W);
         direction = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-        isFiring = Input.GetKeyDown(KeyCode.C);
+        isFiring = Input.GetKeyDown(KeyCode.C) || Input.GetMouseButtonDown(0);
         Debug.Log("Projectile firing is " + isFiring);
-        switchWeapons = Input.GetKeyDown(KeyCode.X);
+        switchWeapons = Input.GetKeyDown(KeyCode.LeftShift);
         dashInput = Input.GetKeyDown(KeyCode.Q);
-        parryInput = Input.GetKeyDown(KeyCode.Z);
+        parryInput = Input.GetKeyDown(KeyCode.E) || Input.GetMouseButtonDown(1);
 
         //if we are jumping, remove from the timer so we can jump again
         if (isJumping)
@@ -407,24 +408,28 @@ public class PlayerController : MonoBehaviour
         GameObject projectileObject = Instantiate(basicProjectile, rb2d.position + Vector2.up * 0.5f, Quaternion.identity);
         ProjectileScript projectile = projectileObject.GetComponent<ProjectileScript>();
         //launches the projectile based on the projectile speed
-        projectile.Launch(projectileDirection.normalized, projectileSpeed);
+        projectile.Launch(projectileDirection.normalized, projectileSpeed * 100);
         Debug.Log("after");
     }
 
     //function used to fire the spread shot, from a prefab located in the prefabs folder
-    public void fireSpreadShot(Vector2 projectileDirection, int spreadAmount)
+    public void fireSpreadShot(Vector2 projectileDirection, int spreadAmount, Vector3 startPoint)
     {
-        for (int i = 0; i < spreadAmount; i++)
+        float angleStep = 22.5f / spreadAmount;
+        float angle = 75f * direction.x;
+
+        for (int i = 0; i <= spreadAmount; i++)
         {
-            //if not moving in a direction, fires the projectile by the direction the player is facing
-            if (projectileDirection == Vector2.zero)
-            {
-                projectileDirection = new Vector2(transform.localScale.x, 0);
-            }
-            GameObject projectileObject = Instantiate(spreadShot, rb2d.position + Vector2.up * 0.5f, Quaternion.identity);
-            ProjectileScript projectile = projectileObject.GetComponent<ProjectileScript>();
-            Vector2 newRotation = new Vector2(projectileDirection.x, projectileDirection.y * ((i/4) - (spreadAmount/10)));
-            projectile.Launch(newRotation, projectileSpeed);
+            float projectileDirXPosition = startPoint.x + Mathf.Sin((angle * Mathf.PI) / 180) * radius;
+            float projectileDirYPosition = startPoint.y + Mathf.Cos((angle * Mathf.PI) / 180) * radius;
+
+            Vector3 projectileVector = new Vector2(projectileDirXPosition, projectileDirYPosition);
+            Vector2 projectileMoveDirection = (projectileVector - startPoint).normalized * projectileSpeed;
+
+            GameObject tmpObj = Instantiate(spreadShot, startPoint, Quaternion.identity);
+            tmpObj.GetComponent<Rigidbody2D>().velocity = new Vector2(projectileMoveDirection.x, projectileMoveDirection.y);
+
+            angle += angleStep;
         }
     }
 
