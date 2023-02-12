@@ -9,6 +9,7 @@ TagManager:
   - Marker
   - BasicEnemy
   - ParryEnemy
+  - Projectile
   layers:
   - Default
   - TransparentFX

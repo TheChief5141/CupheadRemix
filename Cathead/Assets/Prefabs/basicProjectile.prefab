@@ -11,11 +11,11 @@ GameObject:
   - component: {fileID: 8999392608094644499}
   - component: {fileID: 1855140957355536146}
   - component: {fileID: 8489842690215119914}
-  - component: {fileID: 7609796240137954305}
+  - component: {fileID: 4340153191095680007}
   - component: {fileID: 8804473922665523914}
   m_Layer: 0
   m_Name: basicProjectile
-  m_TagString: Untagged
+  m_TagString: Projectile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -103,7 +103,7 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 1.0000002, y: 2.0000005}
   m_Direction: 0
---- !u!114 &7609796240137954305
+--- !u!114 &4340153191095680007
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -112,10 +112,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 8890577431583091878}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5434b28471c38d848afa8146038fd60f, type: 3}
+  m_Script: {fileID: 11500000, guid: 3a88d692ff5d1e34287258f844692a50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 0}
 --- !u!50 &8804473922665523914
 Rigidbody2D:
   serializedVersion: 4

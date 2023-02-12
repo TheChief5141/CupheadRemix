@@ -14,7 +14,9 @@ public class PlayerController : MonoBehaviour
     //how much damage the character does
     public float damage;
     //how many hits it takes to get a super
-    public float superAmount;
+    public int superAmount;
+    private int currentSuper;
+    private bool canSuper;
 
     [Header("Components")]
     //audio source to play sound
@@ -124,8 +126,9 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         GatherInputs();
-        ProjectileCheck();
+        //ProjectileCheck();
     }
+    /*
 
     void ProjectileCheck()
     {
@@ -142,6 +145,7 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+    */
 
     void FixedUpdate()
     {
@@ -397,6 +401,7 @@ public class PlayerController : MonoBehaviour
     }
 
     //function used to fire the basic projectile, from a prefab located in the prefabs folder
+    /*
     private void fireBasicProjectile(Vector2 projectileDirection)
     {
         //if not moving in a direction, fires the projectile by the direction the player is facing
@@ -416,7 +421,7 @@ public class PlayerController : MonoBehaviour
     public void fireSpreadShot(Vector2 projectileDirection, int spreadAmount, Vector3 startPoint)
     {
         float angleStep = 22.5f / spreadAmount;
-        float angle = 75f * direction.x;
+        float angle = 75f * projectileDirection.x;
 
         for (int i = 0; i <= spreadAmount; i++)
         {
@@ -432,6 +437,7 @@ public class PlayerController : MonoBehaviour
             angle += angleStep;
         }
     }
+    */
 
     //function to be run when hitting an enemy, and starts the invincible timer
     public void ChangeHealth(int amount)
@@ -446,8 +452,7 @@ public class PlayerController : MonoBehaviour
             }
             isInvincible = true;
             invincibleTimer = timeInvincible;
-            //particles = collisionParticlesPrefab;
-            //audioSource.PlayOneShot(hurtSound);
+            
         }
         //currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth); 
         //UIHealthScript.instance.SetValue(currentHealth/(float)maxHealth);
@@ -455,7 +460,7 @@ public class PlayerController : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            SceneManager.LoadScene("SampleScene");
+            SceneManager.LoadScene("Game Over");
         }
     }
 
@@ -466,12 +471,13 @@ public class PlayerController : MonoBehaviour
             if (parryActive == true)
             {
                 ParryEffects();
+                Destroy(collision.gameObject);
                 StartCoroutine(StopParrying());
                 return;
             }
             else
             {
-                //ChangeHealth();
+                ChangeHealth(-1);
             }
         }
     } 

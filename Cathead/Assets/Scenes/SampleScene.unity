@@ -236,6 +236,7 @@ GameObject:
   - component: {fileID: 62821190}
   - component: {fileID: 62821196}
   - component: {fileID: 62821197}
+  - component: {fileID: 62821198}
   m_Layer: 0
   m_Name: Player
   m_TagString: PlayerController
@@ -615,6 +616,26 @@ TrailRenderer:
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
   m_Emitting: 0
+--- !u!114 &62821198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 62821189}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5434b28471c38d848afa8146038fd60f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  basicProjectile: {fileID: 8890577431583091878, guid: b58515dc95095a147a7bc22efb055ab9, type: 3}
+  spreadShot: {fileID: 7804523560013681160, guid: e9a0e46b7a569bc4dab2ecab2acf2eba, type: 3}
+  projectileSpeed: 10
+  currentWeapon: 0
+  spreadAmount: 5
+  radius: 2
+  direction: {x: 0, y: 0}
+  gameManager: {fileID: 168685564}
 --- !u!1 &145798963
 GameObject:
   m_ObjectHideFlags: 0
@@ -1052,7 +1073,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &895320933
 Transform:
   m_ObjectHideFlags: 0
