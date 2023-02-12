@@ -97,6 +97,11 @@ public class ProjectileScript : MonoBehaviour
         float angleStep = 22.5f / spreadAmount;
         float angle = 75f * projectileDirection.x;
 
+        if (projectileDirection == Vector2.zero)
+        {
+            projectileDirection = new Vector2(transform.localScale.x, 0);
+        }
+
         for (int i = 0; i <= spreadAmount; i++)
         {
             float projectileDirXPosition = startPoint.x + Mathf.Sin((angle * Mathf.PI) / 180) * radius;

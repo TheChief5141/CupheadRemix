@@ -6085,6 +6085,7 @@ GameObject:
   - component: {fileID: 1401454588}
   - component: {fileID: 1401454587}
   - component: {fileID: 1401454590}
+  - component: {fileID: 1401454591}
   m_Layer: 0
   m_Name: Boss
   m_TagString: Untagged
@@ -6180,6 +6181,34 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &1401454591
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1401454586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecb1ba838438c764c9ea9ab2e992d4aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  breakTime: 5
+  jumpForce: 14
+  jumpTimer: 5
+  jumpAmount: 3
+  movementSpeed: 14
+  groundLength: 0.6
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 1024
+  colliderOffset: {x: 0, y: 0, z: 0}
+  jumpDelay: 5
+  direction: {x: 0, y: 0}
+  maxSpeed: 7
+  linearDrag: 4
+  gravity: 0.4
+  fallMultiplier: 5
 --- !u!1 &1426547084
 GameObject:
   m_ObjectHideFlags: 0
