@@ -42,11 +42,20 @@ public class laser : MonoBehaviour
                 Debug.Log("HIT SOMETHING");
              
                  Draw2DRay(laserFirePoint.position, laserFirePoint.transform.right * defDistanceRay);
+
+            StartCoroutine(StopLaser());
     }
 
     void Draw2DRay(Vector2 startPos, Vector2 endPos)
     {
         m_lineRenderer.SetPosition(0, startPos);
         m_lineRenderer.SetPosition(1, endPos);
+    }
+
+    private IEnumerator StopLaser()
+    {
+        yield return new WaitForSeconds(4);
+        m_lineRenderer.enabled = false;
+        
     }
 }
