@@ -111,6 +111,17 @@ public class PlayerController : MonoBehaviour
     public int parryTime = 5;
     public AudioClip parrySoundEffect;
 
+    public AudioClip shootShot;
+    public AudioClip shootSpread;
+
+    public AudioClip jumpUp;
+    public AudioClip laserSound;
+
+    //playsounds
+    public void PlaySound(AudioClip clip)
+    {
+        audioSource.PlayOneShot(clip);
+    }
 
 
     // Start is called before the first frame update
@@ -123,7 +134,11 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         GatherInputs();
-        ProjectileCheck();
+        ProjectileCheck(); 
+        if (Input.GetKeyDown(KeyCode.T)) //lasersound
+        {
+            PlaySound(laserSound);
+        }
     }
 
     void ProjectileCheck()
@@ -148,6 +163,7 @@ public class PlayerController : MonoBehaviour
         if (jumpTimer > Time.time && onGround)
         {
             characterJump();
+            PlaySound(jumpUp);
         }
         modifyPhysics();
     }
@@ -398,6 +414,7 @@ public class PlayerController : MonoBehaviour
     //function used to fire the basic projectile, from a prefab located in the prefabs folder
     private void fireBasicProjectile(Vector2 projectileDirection)
     {
+        PlaySound(shootShot);
         //if not moving in a direction, fires the projectile by the direction the player is facing
         if (projectileDirection == Vector2.zero)
         {
@@ -416,6 +433,7 @@ public class PlayerController : MonoBehaviour
     {
         for (int i = 0; i < spreadAmount; i++)
         {
+            PlaySound(shootSpread);
             //if not moving in a direction, fires the projectile by the direction the player is facing
             if (projectileDirection == Vector2.zero)
             {
@@ -474,7 +492,7 @@ public class PlayerController : MonoBehaviour
     void ParryEffects()
     {
         Debug.Log("Parried");
-        audioSource.PlayOneShot(parrySoundEffect);
+        PlaySound(parrySoundEffect);
     }
 
     private IEnumerator StopParrying()
