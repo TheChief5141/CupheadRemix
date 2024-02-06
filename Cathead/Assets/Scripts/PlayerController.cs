@@ -5,10 +5,10 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
-    [Header("Health")]
-    public int maxHealth = 5;
-    public int health { get { return currentHealth; }}
-    int currentHealth;
+    [Header("Audio")]
+    public AudioClip jumpUp;
+    public AudioClip hurtSound;
+
 
     [Header("Characteristics")]
     //how much damage the character does
@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
     private int currentSuper;
 
     public bool canSuper {get{return canPlayerSuper;}}
-    bool canPlayerSuper;
+    public bool canPlayerSuper;
 
     [Header("Components")]
     //audio source to play sound
@@ -90,23 +90,6 @@ public class PlayerController : MonoBehaviour
     //stores the time needed to be invincible when hit
     float invincibleTimer;
 
-    [Header("Projectiles")]
-    //creating the basic projectile from a prefab
-    public GameObject basicProjectile;
-    //creating the projectile from the spread shot
-    public GameObject spreadShot;
-    //controls the speed of the projectiles
-    public float projectileSpeed;
-    //checks if the bullet has been fired or not
-    private bool isFiring;
-    //checks if player presses key to switch weapons
-    private bool switchWeapons;
-    //represents with currentweapon we are currently wielding, 0 for basic, 1 for spread shot
-    public int currentWeapon;
-    //controls the amount of spread shots used
-    public int spreadAmount;
-    public int radius;
-
     [Header("Parry")]
     private bool parryActive;
     private bool parryInput;
@@ -116,13 +99,14 @@ public class PlayerController : MonoBehaviour
     public int parryTime = 5;
     public AudioClip parrySoundEffect;
 
+    private HPSystem hpSystem;
 
 
     // Start is called before the first frame update
     void Start()
     {
         trailRenderer = GetComponent<TrailRenderer>();
-        currentHealth = maxHealth;
+        hpSystem = GetComponent<HPSystem>();
     }
 
     // Update is called once per frame
@@ -152,8 +136,6 @@ public class PlayerController : MonoBehaviour
         isJumping = Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.W);
         isFalling = Input.GetButtonUp("Jump") || Input.GetKeyUp(KeyCode.W);
         direction = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-        isFiring = Input.GetKeyDown(KeyCode.C) || Input.GetMouseButtonDown(0);
-        switchWeapons = Input.GetKeyDown(KeyCode.LeftShift);
         dashInput = Input.GetKeyDown(KeyCode.Q);
         parryInput = Input.GetKeyDown(KeyCode.E) || Input.GetMouseButtonDown(1);
 
@@ -162,20 +144,6 @@ public class PlayerController : MonoBehaviour
         {
             jumpTimer = Time.time + jumpDelay;
         }
-
-        //switch weapons, 0 is basic projectile, 1 is spread shot
-        if (switchWeapons)
-        {
-            if (currentWeapon == 1)
-            {
-                currentWeapon = 0;
-            }
-            if (currentWeapon == 0)
-            {
-                currentWeapon = 1;
-            }
-        }
-
         if (parryInput && canParry)
         {
             parryActive = true;
@@ -311,6 +279,7 @@ public class PlayerController : MonoBehaviour
     private void characterJump()
     {
         Debug.Log("Yahooo!");
+        audioSource.PlayOneShot(jumpUp);
         rb2d.velocity = new Vector2(rb2d.velocity.x, 0);
         rb2d.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         jumpTimer = 0;
@@ -370,26 +339,6 @@ public class PlayerController : MonoBehaviour
     }
 
     //function to be run when hitting an enemy, and starts the invincible timer
-    public void ChangeHealth(int amount)
-    {
-        if (amount < 0)
-        {
-            if (isInvincible)
-            {
-                return;
-            }
-            isInvincible = true;
-            invincibleTimer = timeInvincible;
-            
-        }
-
-        currentHealth += amount;
-
-        if (currentHealth <= 0)
-        {
-            SceneManager.LoadScene("Game Over");
-        }
-    }
 
     void OnCollisionEnter2D(Collision2D collision)
     {
@@ -404,19 +353,43 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                ChangeHealth(-1);
+                if (isInvincible)
+                {
+                    return;
+                }
+                isInvincible = true;
+                invincibleTimer = timeInvincible;
+                audioSource.PlayOneShot(hurtSound);
+                hpSystem.TakeDamage(-1); 
             }
+        }
+
+        if (collision.gameObject.tag == "BasicEnemy")
+        {
+            Debug.Log("help");
+            if (isInvincible)
+            {
+                return;
+            }
+            isInvincible = true;
+            invincibleTimer = timeInvincible;
+            audioSource.PlayOneShot(hurtSound);
+            hpSystem.TakeDamage(-1); 
         }
     } 
 
     void ParryEffects()
     {
         Debug.Log("Parried");
-        currentSuper += 1;
+        currentSuper += 1; 
         audioSource.PlayOneShot(parrySoundEffect);
         if (currentSuper >= 3)
         {
             canPlayerSuper = true;
+        }
+        if (currentSuper >= 10)
+        {
+            SceneManager.LoadScene("You Win");
         }
     }
 

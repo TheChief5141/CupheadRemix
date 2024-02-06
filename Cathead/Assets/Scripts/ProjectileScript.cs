@@ -23,6 +23,10 @@ public class ProjectileScript : MonoBehaviour
     public int radius;
     public Vector2 direction;
 
+    public AudioClip shootShot;
+    public AudioClip shootSpread;
+    AudioSource audioSource;
+
 
     Rigidbody2D rb2d;
     GameObject playerControllerObject;
@@ -36,7 +40,7 @@ public class ProjectileScript : MonoBehaviour
 
     void Start()
     {
-
+        audioSource = GetComponent<AudioSource>();
     }
 
 
@@ -48,9 +52,11 @@ public class ProjectileScript : MonoBehaviour
             Debug.Log("Where ya at");
             if (currentWeapon == 0)
             {
+                audioSource.PlayOneShot(shootShot);
                 Debug.Log("Before");
                 fireBasicProjectile(direction);
             }else if (currentWeapon == 1){
+                audioSource.PlayOneShot(shootSpread);
                 fireSpreadShot(direction, spreadAmount, transform.position);
             }
         }

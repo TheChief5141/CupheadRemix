@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7248399941384072594}
   - component: {fileID: 130030914768825235}
   - component: {fileID: 7900092478384048299}
-  - component: {fileID: 8008843427664888845}
+  - component: {fileID: 7138024794500573620}
   - component: {fileID: 7087813489254870603}
   m_Layer: 0
   m_Name: basicProjectile 1
@@ -103,7 +103,7 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 1.0000002, y: 2.0000005}
   m_Direction: 0
---- !u!114 &8008843427664888845
+--- !u!114 &7138024794500573620
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

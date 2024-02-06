@@ -40,7 +40,6 @@ public class BasicEnemyController : MonoBehaviour
 
 	void OnTriggerEnter2D(Collider2D collision)
 	{
-        Debug.Log("poopy");
 		if (collision.tag == "Marker")
         {
             Debug.Log("Made Contact");
